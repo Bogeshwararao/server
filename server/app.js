@@ -1,9 +1,10 @@
 const express = require("express");
 const app = express();
-app.get("/", (req,res)=>{
-    res.status(200).send("welcome");
-})
-const PORT=5000;
-app.listen(PORT,()=>{
+const router = require('./router/auth-router');
+
+app.use("/api", router);
+
+const PORT = 5002;
+app.listen(PORT, () => {
     console.log(`Server running on port: ${PORT}`);
-})
+});
