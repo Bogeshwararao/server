@@ -9,7 +9,7 @@ app.use(express.json());
 
 app.use("/api", router);
 
-const PORT = 5005;
+const PORT = 5001;
 
 // Use the environment variable loaded from the .env file
 connectDb().then(() => {

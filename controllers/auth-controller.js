@@ -1,4 +1,5 @@
 const User = require("../models/user-model");
+const bcrypt = require("bcryptjs");
 
 const homeHandler = (req, res) => {
     try {
@@ -22,13 +23,47 @@ const regHandler = async (req, res) => {
         }
 
         // Create a new user
-        const userCreated = await User.create({ username, email, phone, password });
+        const userCreated = await User.create({
+             username,
+             email, 
+             phone, 
+             password 
+            });
 
-        res.status(200).json({ data: userCreated, success: true, message: "User registered successfully" });
+        res.status(200).json({ msg: userCreated,
+            token :await userCreated.generateToken(),
+        userId:userCreated._id.toString()});
     } catch (error) {
         console.error(error);
         res.status(500).send("Internal Server Error: Unable to process the request");
     }
 };
 
-module.exports = { homeHandler, regHandler };
+
+const login = async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        const userExist = await User.findOne({ email });
+
+        if (!userExist) {
+            return res.status(400).json({ message: "Invalid credentials" });
+        }
+
+        const isPasswordValid = await bcrypt.compare(password, userExist.password);
+
+        if (isPasswordValid) {
+            res.status(200).json({
+                msg: "Login successful",
+                token: await userExist.generateToken(),
+                userId: userExist._id.toString(),
+            });
+        } else {
+            res.status(401).json({ message: "Invalid email or password" });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("Internal Server Error: Unable to process the request");
+    }
+};
+
+module.exports = { homeHandler, regHandler , login };
