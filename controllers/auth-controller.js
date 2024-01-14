@@ -13,9 +13,7 @@ const homeHandler = (req, res) => {
 const regHandler = async (req, res) => {
     try {
         console.log(req.body);
-        const { username, email, phone, password } = req.body;
-        
-        // Check if user with the given email already exists
+        const { username, email, phone, password } = req.body; 
         const userExist = await User.findOne({ email });
 
         if (userExist) {
